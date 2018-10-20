@@ -34,7 +34,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-  - host: "*.tendcloud.com"
+  - host: "*.jimmysong.io"
     http:
       paths:
       - path: /docGenerate
@@ -47,8 +47,6 @@ spec:
 
 - `traefik.frontend.rule.type: PathPrefixStrip`：表示将截掉URL中的`path`
 - `kubernetes.io/ingress.class`：表示使用的ingress类型
-
-关于Ingress annotation的更多信息请参考：[Ingress Annotations - kubernetes.io](https://github.com/kubernetes/ingress-nginx/blob/master/docs/annotations.md)。
 
 在nginx中增加配置：
 

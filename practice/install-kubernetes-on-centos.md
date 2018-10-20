@@ -1,8 +1,10 @@
 # 在CentOS上部署kubernetes集群
 
-> 本文档最初是基于kubenetes1.6版本编写的，对于kuberentes1.8版本同样适用，只是个别位置有稍许变动，变动的地方我将特别注明。
+> 本文档最初是基于kubenetes1.6版本编写的，对于kuberentes1.8及以上版本同样适用，只是个别位置有稍许变动，变动的地方我将特别注明版本要求。
 
 本系列文档介绍使用二进制部署 `kubernetes` 集群的所有步骤，而不是使用 `kubeadm` 等自动化方式来部署集群，同时开启了集群的TLS安全认证，该安装步骤适用于所有bare metal环境、on-premise环境和公有云环境。
+
+>  如果您想快速的在自己电脑的本地环境下使用虚拟机来搭建kubernetes集群，可以参考[本地分布式开发环境搭建（使用Vagrant和Virtualbox）](../develop/using-vagrant-and-virtualbox-for-development.md)。
 
 在部署的过程中，将详细列出各组件的启动参数，给出配置文件，详解它们的含义和可能遇到的问题。
 
@@ -25,7 +27,7 @@
 ## 集群详情
 
 + OS：CentOS Linux release 7.3.1611 (Core)  3.10.0-514.16.1.el7.x86_64
-+ Kubernetes 1.6.0
++ Kubernetes 1.6.0+（最低的版本要求是1.6）
 + Docker  1.12.5（使用yum安装）
 + Etcd 3.1.5
 + Flannel 0.7.1 vxlan或者host-gw 网络
@@ -40,6 +42,8 @@
 在下面的步骤中，我们将在三台CentOS系统的物理机上部署具有三个节点的kubernetes1.6.0集群。
 
 角色分配如下：
+
+**镜像仓库**：172.20.0.112，域名为 `harbor.jimmysong.io`，为私有镜像仓库，请替换为公共仓库或你自己的镜像仓库地址。
 
 **Master**：172.20.0.113
 

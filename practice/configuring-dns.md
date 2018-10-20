@@ -1,4 +1,4 @@
-# 配置内置DNS（kube-dns）
+# 安装配置kube-dns
 
 在我们安装Kubernetes集群的时候就已经安装了kube-dns插件，这个插件也是官方推荐安装的。通过将 Service 注册到 DNS 中，Kuberentes 可以为我们提供一种简单的服务注册发现与负载均衡方式。
 
@@ -12,7 +12,7 @@ kubeadm init --feature-gates=CoreDNS=true
 
 ## kube-dns
 
-kube-dns是Kubernetes中的一个内置插件，目前作为一个独立的开源项目维护，见https://github.com/kubernetes/dns。
+kube-dns是Kubernetes中的一个内置插件，目前作为一个独立的开源项目维护，见<https://github.com/kubernetes/dns>。
 
 下文中给出了配置 DNS Pod 的提示和定义 DNS 解析过程以及诊断 DNS 问题的指南。
 
@@ -78,7 +78,7 @@ spec:
 
 ## 继承节点的 DNS
 
-运行 Pod 时，kubelet 将预先配置集群 DNS 服务器到 Pod 中，并搜索节点自己的 DNS 设置路径。如果节点能够解析特定于较大环境的 DNS 名称，那么 Pod 应该也能够解析。请参阅下面的[已知问题](#known-issues)以了解警告。
+运行 Pod 时，kubelet 将预先配置集群 DNS 服务器到 Pod 中，并搜索节点自己的 DNS 设置路径。如果节点能够解析特定于较大环境的 DNS 名称，那么 Pod 应该也能够解析。请参阅下面的已知问题以了解警告。
 
 如果您不想要这个，或者您想要为 Pod 设置不同的 DNS 配置，您可以给 kubelet 指定 `--resolv-conf` 标志。将该值设置为 "" 意味着 Pod 不继承 DNS。将其设置为有效的文件路径意味着 kubelet 将使用此文件而不是 `/etc/resolv.conf` 用于 DNS 继承。
 
@@ -111,7 +111,7 @@ data:
 | foo.acme.local                       | 自定义 DNS (1.2.3.4)          |
 | widget.com                           | 上游 DNS (8.8.8.8 或 8.8.4.4) |
 
-查看 [ConfigMap 选项](#configmap-options) 获取更多关于配置选项格式的详细信息。
+查看 ConfigMap 选项获取更多关于配置选项格式的详细信息。
 
 ### 对 Pod 的影响
 
@@ -121,7 +121,7 @@ data:
 
 **未进行自定义配置**：没有匹配上配置的集群域名后缀的任何请求，例如 “www.kubernetes.io”，将会被转发到继承自节点的上游 nameserver。
 
-**进行自定义配置**：如果配置了存根域和上游 DNS 服务器（和在 [前面例子](#configuring-stub-domain-and-upstream-dns-servers) 配置的一样），DNS 查询将根据下面的流程进行路由：
+**进行自定义配置**：如果配置了存根域和上游 DNS 服务器（和在前面例子配置的一样），DNS 查询将根据下面的流程进行路由：
 
 1. 查询首先被发送到 kube-dns 中的 DNS 缓存层。
 
@@ -146,7 +146,7 @@ kube-dns `kube-system:kube-dns` ConfigMap 的选项如下所示：
 
 #### 示例：存根域
 
-在这个例子中，用户有一个 Consul DNS 服务发现系统，他们希望能够与 kube-dns 集成起来。 Consul 域名服务器地址为 10.150.0.1，所有的 Consul 名字具有后缀 “.consul.local”。 要配置 Kubernetes，集群管理员只需要简单地创建一个 ConfigMap 对象，如下所示：
+在这个例子中，用户有一个 Consul DNS 服务发现系统，他们希望能够与 kube-dns 集成起来。 Consul 域名服务器地址为 10.150.0.1，所有的 Consul 名字具有后缀 `.consul.local`。 要配置 Kubernetes，集群管理员只需要简单地创建一个 ConfigMap 对象，如下所示：
 
 ```yaml
 apiVersion: v1
@@ -201,7 +201,6 @@ spec:
 
 使用该文件创建 Pod 并验证其状态：
 
-```shell
 $ kubectl create -f busybox.yaml
 pod "busybox" created
 
@@ -212,7 +211,7 @@ busybox   1/1       Running   0          <some-time>
 
 该 Pod 运行后，您可以在它的环境中执行 `nslookup`。如果您看到类似如下的输出，表示 DNS 正在正确工作。
 
-```shell
+​```bash
 $ kubectl exec -ti busybox -- nslookup kubernetes.default
 Server:    10.0.0.10
 Address 1: 10.0.0.10
@@ -225,9 +224,9 @@ Address 1: 10.0.0.1
 
 ### 首先检查本地 DNS 配置
 
-查看下 resolv.conf 文件。（参考[集成节点的 DNS](inheriting-dns-from-the-node)和 下面的[已知问题](#known-issues)获取更多信息）
+查看下 resolv.conf 文件。
 
-```shell
+```bash
 $ kubectl exec busybox cat /etc/resolv.conf
 ```
 
@@ -263,7 +262,7 @@ nslookup: can't resolve 'kubernetes.default'
 
 使用 `kubectl get pods` 命令验证 DNS pod 是否正在运行。
 
-```shell
+```bash
 $ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
 NAME                    READY     STATUS    RESTARTS   AGE
 ...
@@ -277,7 +276,7 @@ kube-dns-v19-ezo1y      3/3       Running   0           1h
 
 使用 `kubectl logs` 命令查看 DNS 守护进程的日志。
 
-```shell
+```bash
 $ kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name) -c kubedns
 $ kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name) -c dnsmasq
 $ kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name) -c sidecar
@@ -289,7 +288,7 @@ $ kubectl logs --namespace=kube-system $(kubectl get pods --namespace=kube-syste
 
 使用 `kubectl get service` 命令验证 DNS 服务是否启动。
 
-```shell
+```bash
 $ kubectl get svc --namespace=kube-system
 NAME          CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
 ...
@@ -303,7 +302,7 @@ kube-dns      10.0.0.10      <none>        53/UDP,53/TCP        1h
 
 您可以使用`kubectl get endpoints`命令验证 DNS 端点是否被暴露。
 
-```shell
+```bash
 $ kubectl get ep kube-dns --namespace=kube-system
 NAME       ENDPOINTS                       AGE
 kube-dns   10.180.3.17:53,10.180.3.17:53    1h
@@ -328,6 +327,6 @@ Kubernetes 1.3 版本起引入了支持多站点 Kubernetes 安装的集群联�
 ## 参考
 
 - [Configure DNS Service](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/)
-- [Service 和 Pod 的 DNS](/docs/concepts/services-networking/dns-pod-service/)
-- [自动扩容集群中的 DNS 服务](/docs/tasks/administer-cluster/dns-horizontal-autoscaling/)
+- [Service 和 Pod 的 DNS](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
+- [自动扩容集群中的 DNS 服务](https://kubernetes.io/docs/tasks/administer-cluster/dns-horizontal-autoscaling/)
 - [Using CoreDNS for Service Discovery](https://kubernetes.io/docs/tasks/administer-cluster/coredns/)

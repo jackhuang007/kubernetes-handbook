@@ -1,6 +1,6 @@
 # 管理集群中的TLS
 
-在本书的最佳实践部分，我们在CentOS上部署了kuberentes集群，其中最开始又重要的一步就是创建TLS认证的，查看[创建TLS证书和秘钥](../practice/create-tls-and-secret-key.md)。很多人在进行到这一步是都会遇到各种各样千奇百怪的问题，这一步是创建集群的基础，我们有必要详细了解一下背后的流程和原理。
+在本书的最佳实践部分，我们在CentOS上部署了kuberentes集群，其中最开始又重要的一步就是创建TLS认证的，查看[创建TLS证书和秘钥](../practice/create-tls-and-secret-key.md)。很多人在进行到这一步时都会遇到各种各样千奇百怪的问题，这一步是创建集群的基础，我们有必要详细了解一下其背后的流程和原理。
 
 ## 概览
 
@@ -72,7 +72,7 @@ spec:
 EOF
 ```
 
-请注意，在步骤1中创建的`server.csr`文件是base64编码并存储在`.spec.request`字段中。 我们还要求提供“数字签名”，“密钥加密”和“服务器身份验证”密钥用途的证书。 我们[这里](https://godoc.org/k8s.io/client-go/pkg/apis/certificates/v1beta1#KeyUsage)支持列出的所有关键用途和扩展的关键用途，以便您可以使用相同的API请求客户端证书和其他证书。
+请注意，在步骤1中创建的`server.csr`文件是base64编码并存储在`.spec.request`字段中。 我们还要求提供“数字签名”，“密钥加密”和“服务器身份验证”密钥用途的证书。
 
 在API server中可以看到这些CSR处于pending状态。执行下面的命令你将可以看到：
 
